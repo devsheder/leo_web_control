@@ -6,3 +6,11 @@
 #debug {
     display: none;
 }
+
+#testWrapper {
+    display: none;
+}
+
+div {
+    margin-bottom: 5%;
+}
