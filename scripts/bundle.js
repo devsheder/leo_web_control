@@ -1,5 +1,5 @@
 var deviceRpi = null;
-var serverRpi = null;
+var serviceRpi = null;
 var oBT = navigator.bluetooth;
 var uuidService = "00000000-0000-1000-8000-00805f9b34fb";
 var uuidRead = "ffffffff-ffff-ffff-ffff-fffffffffff0";
@@ -9,8 +9,7 @@ var nomBT = "helloworld";
  *
  * @param event
  */
-function connexion() {
-
+function connection() {
     // Demande connexion BT
     navigator.bluetooth.requestDevice({
         "filters": [{
@@ -19,12 +18,17 @@ function connexion() {
         optionalServices:[uuidService]
     }).then(device => {
         deviceRpi = device;
-    // Connexion OK : récupération du "server" BT
+        // Connexion OK : récupération du service BT
         device.gatt.connect().then(server => {
-            serverRpi = server;
             alert("Vous êtes maintenant connecté à Léo... à vous de jouer !");
+            return server.getPrimaryService(uuidService);
         }, error => {
             appendHTML("error", "Erreur lors de la connexion à Léo : " + error + "<br/>");
+        }).then(service => {
+            serviceRpi = service;
+            appendHTML("testResultConnection", "Récupération service BT OK ! <br/>");
+        }, error => {
+            appendHTML("error", "Erreur lors de la récupération du service BT : " + error + "<br/>");
         });
     }, error => {
             appendHTML("error", "Connexion BT à Léo KO : " + error + "<br/>");
@@ -35,20 +39,15 @@ function connexion() {
  * Appel service READ du périphérique BT associé
  */
 function testServiceRead() {
-    if (serverRpi) {
+    if (serviceRpi) {
         // Récupération du service BT exposé
-        serverRpi.getPrimaryService(uuidService).then(service => {
-            // Appel à la charactéristique "READ" du service
-            service.getCharacteristic(uuidRead).then(characteristic => {
-                characteristic.readValue().then(value => {
-                    appendHTML("testResultRead", "Valeur retournée par le service BT : " + new TextDecoder("utf-8").decode(value) + "<br/>");
-                }, error => {
-                    appendHTML("error", "Erreur lors de l'appel au service : " + error + "<br/>");
-                });
-            })
-        }, error => {
-            appendHTML("error", "Erreur lors de la récupération du service BT : " + error + "<br/>");
-        });
+        serviceRpi.getCharacteristic(uuidRead).then(characteristic => {
+            characteristic.readValue().then(value => {
+                appendHTML("testResultRead", "Valeur retournée par le service BT : " + new TextDecoder("utf-8").decode(value) + "<br/>");
+            }, error => {
+                appendHTML("error", "Erreur lors de l'appel au service : " + error + "<br/>");
+            });
+        })
     }
 }
 
@@ -57,20 +56,15 @@ function testServiceRead() {
  * @param event
  */
 function testServiceWrite() {
-    if (serverRpi) {
+    if (serviceRpi) {
         // Récupération du service BT exposé
-        serverRpi.getPrimaryService(uuidService).then(service => {
-            // Appel à la charactéristique "READ" du service
-            var toSend = "Hello world !";
-            service.getCharacteristic(uuidRead).then(characteristic => {
-                characteristic.writeValue(str2ab(toSend))
-            }).then(test => {
+        var toSend = "Hello world !";
+        serviceRpi.getCharacteristic(uuidRead).then(characteristic => {
+            characteristic.writeValue(str2ab(toSend))
+        }).then(test => {
                 appendHTML("testResultWrite", "Envoi du message ["+toSend+"] OK !<br/>");
-            }, error => {
-                appendHTML("testResultWrite", "Envoi du message ["+toSend+"] KO : " + error + "<br/>");
-            });
         }, error => {
-            appendHTML("error", "Erreur lors de la récupération du service BT : " + error + "<br/>");
+            appendHTML("testResultWrite", "Envoi du message ["+toSend+"] KO : " + error + "<br/>");
         });
     }
 }
