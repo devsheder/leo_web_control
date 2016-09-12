@@ -43,15 +43,11 @@ function testServiceRead() {
             service.getCharacteristic(uuidRead)
             .then(characteristic => {
             characteristic.readValue().then(value => {
-            var stringConverstion = "";
-        for(var i=0; i < value.byteLength; i++) {
-            stringConverstion += String.fromCharCode(value.getUint8(i));
-        }
-        appendHTML("testResult", "Valeur retournée par le service BT : " + stringConverstion + "<br/>");
-    }, error => {
-            appendHTML("error", "Erreur lors de l'appel au service : " + error + "<br/>");
-        });
-    })
+                appendHTML("testResult", "Valeur retournée par le service BT : " + new TextDecoder("utf-8").decode(value) + "<br/>");
+            }, error => {
+                appendHTML("error", "Erreur lors de l'appel au service : " + error + "<br/>");
+            });
+        })
     }, error => {
             appendHTML("error", "Erreur lors de la récupération du service BT : " + error + "<br/>");
         });
