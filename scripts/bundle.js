@@ -1,7 +1,7 @@
 var deviceRpi = null;
 var serviceRpi = null;
 var oBT = navigator.bluetooth;
-var uuidService = "00000000-0000-1000-8000-00805f9b34fb";
+var uuidService = "ffffffff-ffff-ffff-ffff-fffffffffff0";
 var uuidRead = "ffffffff-ffff-ffff-ffff-fffffffffff0";
 var nomBT = "helloworld";
 
