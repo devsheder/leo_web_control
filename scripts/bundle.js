@@ -14,15 +14,14 @@ function connection() {
     navigator.bluetooth.requestDevice({
         "filters": [{
             "name": nomBT
-        }]
-        /*, optionalServices:[uuidService]*/
+        }],
+        optionalServices:[uuidService]
     }).then(device => {
         deviceRpi = device;
         // Connexion OK : récupération du service BT
         device.gatt.connect().then(server => {
             alert("Vous êtes maintenant connecté à Léo... à vous de jouer !");
-            console.log(server);
-            // return server.getPrimaryService(uuidService);
+            return server.getPrimaryService(uuidService);
         }, error => {
             appendHTML("error", "Erreur lors de la connexion à Léo : " + error + "<br/>");
         }).then(service => {
