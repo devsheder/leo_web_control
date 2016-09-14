@@ -6,3 +6,18 @@
 div {
     margin-bottom: 5%;
 }
+
+.joypad div {
+    margin:0;
+    padding:0;
+}
+
+.joypad {
+    display:flex;
+    flex-direction: column;
+}
+
+.joypad .column {
+    display:flex;
+    flex-direction: row;
+}

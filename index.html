@@ -16,13 +16,47 @@
         </div>
 
         <div>
-            <input type="button" id="testRead" value="Tester service READ" onclick="javascript:testServiceRead();"/>
-            <div id="testResultRead"></div>
+            <div class="joypad">
+                <div class="column">
+                    <div>
+                        <img src="img/left_up.png" />
+                    </div>
+                    <div>
+                        <img src="img/central_up.png" onclick="javascript:moveForward();"/>
+                    </div>
+                    <div>
+                        <img src="img/right_up.png" />
+                    </div>
+                </div>
+                <div class="column">
+                    <div>
+                        <img src="img/left_central.png" onclick="javascript:turnLeft();"/>
+                    </div>
+                    <div>
+                        <img src="img/central_central.png" />
+                    </div>
+                    <div>
+                        <img src="img/right_central.png"  onclick="javascript:turnRight();"/>
+                    </div>
+                </div>
+                <div class="column">
+                    <div>
+                        <img src="img/left_down.png" />
+                    </div>
+                    <div>
+                        <img src="img/central_down.png" onclick="javascript:moveBackward();"/>
+                    </div>
+                    <div>
+                        <img src="img/right_down.png" />
+                    </div>
+                </div>
+            </div>
+            <div id="testResultWrite"></div>
         </div>
 
         <div>
-            <input type="button" id="testWrite" value="Tester service WRITE" onclick="javascript:testServiceWrite();"/>
-            <div id="testResultWrite"></div>
+            <input type="button" id="testRead" value="Tester service READ" onclick="javascript:testServiceRead();"/>
+            <div id="testResultRead"></div>
         </div>
 
     </body>

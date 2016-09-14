@@ -6,8 +6,7 @@ var uuidRead = "ffffffff-ffff-ffff-ffff-fffffffffff0";
 var nomBT = "helloworld";
 
 /**
- *
- * @param event
+ * Lance la connexion au BT
  */
 function connection() {
     // Demande connexion BT
@@ -52,29 +51,57 @@ function testServiceRead() {
 }
 
 /**
- * Appel service WRITE du périphérique BT associé
- * @param event
+ * Fait avancer le robot
  */
-function testServiceWrite() {
+function moveForward() {
+    _callWrite("forward");
+}
+
+/**
+ * Fait reculer le robot
+ */
+function moveBackward() {
+    _callWrite("backward");
+}
+
+/**
+ * Fait tourner le robot à gauche
+ */
+function turnLeft() {
+    _callWrite("left");
+}
+
+/**
+ * Fait tourner le robot à droite
+ */
+function turnRight() {
+    _callWrite("right");
+}
+
+/**
+ * Appel caractéristique write du service BT
+ * @param message à envoyer
+ * @private
+ */
+function _callWrite(message) {
     if (serviceRpi) {
         // Récupération du service BT exposé
-        var toSend = "Hello world !";
         serviceRpi.getCharacteristic(uuidRead).then(characteristic => {
-            characteristic.writeValue(str2ab(toSend))
+            characteristic.writeValue(_str2ab(message));
         }).then(test => {
-                appendHTML("testResultWrite", "Envoi du message ["+toSend+"] OK !<br/>");
+            appendHTML("testResultWrite", "Envoi du message ["+message+"] OK !<br/>");
         }, error => {
-            appendHTML("testResultWrite", "Envoi du message ["+toSend+"] KO : " + error + "<br/>");
+            appendHTML("testResultWrite", "Envoi du message ["+message+"] KO : " + error + "<br/>");
         });
     }
 }
 
 /**
- *
- * @param str
+ *  Converti une String en ArrayBuffer
+ * @param str à convertir
  * @returns {ArrayBuffer}
  */
-function str2ab(str) {
+function _str2ab(str) {
     var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
     var bufView = new Uint16Array(buf);
     for (var i=0, strLen=str.length; i < strLen; i++) {
@@ -84,7 +111,7 @@ function str2ab(str) {
 }
 
 /**
- *
+ * Ajoute de l'HTML dans un élément
  * @param id
  * @param html
  */
