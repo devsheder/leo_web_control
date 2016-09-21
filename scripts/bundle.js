@@ -1,8 +1,9 @@
 var deviceRpi = null;
-var serviceRpi = null;
+var characteristicServiceRpi = null;
 var oBT = navigator.bluetooth;
+//var uuidService = "ffffffff-ffff-ffff-ffff-fffffffffff0";
 var uuidService = "ffffffff-ffff-ffff-ffff-fffffffffff0";
-var uuidRead = "ffffffff-ffff-ffff-ffff-fffffffffff0";
+var uuidCharacteristic = "ffffffff-ffff-ffff-ffff-fffffffffff0";
 var nomBT = "helloworld";
 
 /**
@@ -24,8 +25,10 @@ function connection() {
         }, error => {
             appendHTML("error", "Erreur lors de la connexion à Léo : " + error + "<br/>");
         }).then(service => {
-            serviceRpi = service;
-            appendHTML("testResultConnection", "Récupération service BT OK ! <br/>");
+            return service.getCharacteristic(uuidCharacteristic).then(characteristic => {
+            	characteristicServiceRpi = characteristic;
+            	appendHTML("testResultConnection", "Récupération service BT OK ! <br/>");
+            });
         }, error => {
             appendHTML("error", "Erreur lors de la récupération du service BT : " + error + "<br/>");
         });
@@ -38,16 +41,21 @@ function connection() {
  * Appel service READ du périphérique BT associé
  */
 function testServiceRead() {
-    if (serviceRpi) {
         // Récupération du service BT exposé
-        serviceRpi.getCharacteristic(uuidRead).then(characteristic => {
-            characteristic.readValue().then(value => {
-                appendHTML("testResultRead", "Valeur retournée par le service BT : " + new TextDecoder("utf-8").decode(value) + "<br/>");
-            }, error => {
-                appendHTML("error", "Erreur lors de l'appel au service : " + error + "<br/>");
-            });
-        })
-    }
+	if(characteristicServiceRpi) {
+		characteristicServiceRpi.readValue().then(value => {
+			appendHTML("testResultRead", "Valeur retournée par le service BT : " + new TextDecoder("utf-8").decode(value) + "<br/>");
+		}, error => {
+			appendHTML("error", "Erreur lors de l'appel au service : " + error + "<br/>");
+		});
+	}
+}
+
+/**
+ * Stop le robot
+ */
+function stop() {
+    _callWrite("stop");
 }
 
 /**
@@ -84,16 +92,11 @@ function turnRight() {
  * @private
  */
 function _callWrite(message) {
-    if (serviceRpi) {
-        // Récupération du service BT exposé
-        serviceRpi.getCharacteristic(uuidRead).then(characteristic => {
-            characteristic.writeValue(_str2ab(message));
-        }).then(test => {
-            appendHTML("testResultWrite", "Envoi du message ["+message+"] OK !<br/>");
-        }, error => {
-            appendHTML("testResultWrite", "Envoi du message ["+message+"] KO : " + error + "<br/>");
-        });
-    }
+	if(characteristicServiceRpi) {
+		appendHTML("testResultWrite", "Envoi du message : " + message + "...");
+		characteristicServiceRpi.writeValue(_str2ab(message));
+		appendHTML("testResultWrite", " OK ! <br/>");
+	}
 }
 
 /**
