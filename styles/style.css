@@ -12,6 +12,10 @@ div {
     padding:0;
 }
 
+.joypad img {
+    visibility: hidden;
+}
+
 .joypad {
     display:flex;
     flex-direction: column;
