@@ -5,6 +5,7 @@ var oBT = navigator.bluetooth;
 var uuidService = "ffffffff-ffff-ffff-ffff-fffffffffff0";
 var uuidCharacteristic = "ffffffff-ffff-ffff-ffff-fffffffffff0";
 var nomBT = "helloworld";
+var isWriting = false;
 
 /**
  * Lance la connexion au BT
@@ -92,15 +93,24 @@ function turnRight() {
  * @private
  */
 function _callWrite(message) {
-    // on place un timeout pour laisser le temps au à l'appel précédent de se terminer
-    // pour palier au cas où l'utilisateur appuie vite sur le bouton
-    var self = this;
     if(characteristicServiceRpi) {
-        setTimeout(function() {
-            appendHTML("testResultWrite", "Envoi du message : " + message + "...");
-            self.characteristicServiceRpi.writeValue(_str2ab(message));
-            appendHTML("testResultWrite", " OK ! <br/>");
-        }, 400);
+        // Verrou pour palier au cas où l'utilisateur appuie et relache vite le bouton de commande
+        // Pas d'appel de service BT en cours
+        if(!isWriting) {
+            //appendHTML("testResultWrite", "Envoi du message : " + message + "...");+
+            isWriting = true;
+            characteristicServiceRpi.writeValue(_str2ab(message)).then(value => {
+                // Fin de l'appel BT avec succès : on libère le verrou
+                isWriting = false;
+            });
+            //appendHTML("testResultWrite", " OK ! <br/>");
+        } else {
+            // Appel de service BT donc on retente un nouvel appel
+            // Léger timeout pour limiter le nombre d'appels récursifs
+            setTimeout(function() {
+                _callWrite(message);
+            }, 200);
+        }
     }
 }
 
