@@ -92,11 +92,16 @@ function turnRight() {
  * @private
  */
 function _callWrite(message) {
-	if(characteristicServiceRpi) {
-		appendHTML("testResultWrite", "Envoi du message : " + message + "...");
-		characteristicServiceRpi.writeValue(_str2ab(message));
-		appendHTML("testResultWrite", " OK ! <br/>");
-	}
+    // on place un timeout pour laisser le temps au à l'appel précédent de se terminer
+    // pour palier au cas où l'utilisateur appuie vite sur le bouton
+    var self = this;
+    if(characteristicServiceRpi) {
+        setTimeout(function() {
+            appendHTML("testResultWrite", "Envoi du message : " + message + "...");
+            self.characteristicServiceRpi.writeValue(_str2ab(message));
+            appendHTML("testResultWrite", " OK ! <br/>");
+        }, 400);
+    }
 }
 
 /**
